@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 import os
-from Crypto.Cipher import AES
-from Crypto import Random
 import base64
-import hashlib
+from Crypto.Cipher import AES
 
 class Decryption():
 
@@ -24,12 +22,15 @@ class Decryption():
 		self.data =  s[:-ord(s[len(s)-1:])]
 
 	def decrypt_data(self):
+		print('Strating Decryption Process...')
 		self.get_key()
 		self.data = base64.b64decode(self.data)
 		cip = AES.new(self.key, AES.MODE_CBC, '0'*16)
 		self.data = cip.decrypt(self.data)
 		self.unpad()
-		f = open('decdata.txt','w')
+		print('Decryption Complete.')
+		op_f = input('Output File : ')
+		f = open(op_f,'w')
 		data = []
 		for b in self.data:
 			data.append(chr(b))
