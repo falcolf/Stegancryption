@@ -1,6 +1,6 @@
+import os
 from Cryptography.Encryption import Encryption
 from Cryptography.Decryption import Decryption
-import os
 
 os.system('clear')
 ip = input("1 for encryption and 2 for decryption : ")

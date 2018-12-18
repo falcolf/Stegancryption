@@ -14,9 +14,9 @@ class Encryption():
 
 	def gen_key(self):
 		self.key = os.urandom(32)	#32 bytes for AES 256
-		f = open('key.txt','wb')
-		f.write(self.key)
-		f.close()
+		#f = open('key.txt','wb')
+		#f.write(self.key)
+		#f.close()
 
 	def pad(self):
 		s = self.data
@@ -30,9 +30,12 @@ class Encryption():
 		self.data = cip.encrypt(self.data)
 		enc = base64.b64encode(self.data) #base64 encoding
 		print('Encryption complete.')
-		op_f = input('Output File : ')
+		op_f = input('Encrypted Data File : ')
 		f = open(op_f,'wb')	
 		f.write(enc)
 		f.close()
+		print('Encrypted File Writen...')
+		ip = input('Press any key to continue...')
+		return self.key
 
 
