@@ -30,3 +30,10 @@ def gen_data(uid):
 	face_recognizer.write(str(uid)+'/recognizer.xml')
 	print('file generated')
 	os.chdir(path)
+
+def register_user(uid,passwd):
+	f = open('../cloud_uploads/users.txt','a')
+	line = str(uid)+','+str(passwd)+'\n'
+	f.write(line)
+	f.close()
+

@@ -27,5 +27,21 @@ def do_auth(img,uid):
 		else:
 			return -1
 	else:
-		return 'no face detected'
-	
+		return None
+
+def pass_auth(uid,paswd):
+	f = open('../cloud_uploads/users.txt','r')
+	lines = f.read().split('\n')
+	print(lines)
+	users = []
+	for line in lines:
+		user = line.split(',')
+		users.append(user)
+	print(users)
+	for user in users:
+		if str(uid) == user[0]:
+			print(user[1])
+			if str(paswd) == user[1]:
+				return True
+	return False
+

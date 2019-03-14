@@ -159,14 +159,22 @@ class Steganography():
 		byte = int(bin_byte,2)
 		return byte,next_space
 
-	def store_meta_data(self,l): 												# stores length in first row of the image. Length is stroed in 64 bit format.
+	def store_meta_data(self,l,uid): 												# stores length in first row of the image. Length is stroed in 64 bit format.
 		bin_len = self.get_binary_value(l,64) 
 		for ptr in range(64):
 			chans = list(self.im[0,ptr]) 										# chans now contains the three channel values as list
 			bin_red_chan = self.get_binary_value(chans[0],8) 					# contains binary value for red channel ie 0th channel
 			bin_red_chan_mod = self.get_modified_lsb(bin_red_chan,bin_len[ptr]) # contains modified value for red channel
 			chans[0] = int(bin_red_chan_mod,2) 									# converts binary to decimal and stores modified value into channel list
-			self.im[0,ptr] = tuple(chans) 										# updates image with modified values
+			self.im[0,ptr] = tuple(chans)
+
+		bin_uid = self.get_binary_value(int(uid),64) 
+		for ptr in range(64):
+			chans = list(self.im[0,ptr]) 										# chans now contains the three channel values as list
+			bin_green_chan = self.get_binary_value(chans[1],8) 					# contains binary value for red channel ie 0th channel
+			bin_green_chan_mod = self.get_modified_lsb(bin_green_chan,bin_uid[ptr]) # contains modified value for red channel
+			chans[1] = int(bin_green_chan_mod,2) 									# converts binary to decimal and stores modified value into channel list
+			self.im[0,ptr] = tuple(chans) 										# updates image with modified values										# updates image with modified values
 		
 
 	def extract_meta_data(self):
@@ -176,11 +184,20 @@ class Steganography():
 			bin_red_chan = self.get_binary_value(chans[0],8)
 			bin_len += bin_red_chan[-1]
 		l = int(bin_len,2)
+		return l	
+
+	def extract_receiver(self):
+		bin_uid = ''
+		for ptr in range(64):
+			chans = list(self.im[0,ptr])
+			bin_green_chan = self.get_binary_value(chans[1],8)
+			bin_uid += bin_green_chan[-1]
+		l = int(bin_uid,2)
 		return l
 
-	def encode_data(self,data):
+	def encode_data(self,data,uid):
 		l = len(data)
-		self.store_meta_data(l)
+		self.store_meta_data(l,uid)
 		self.store_data(data)
 		return self.im
 
