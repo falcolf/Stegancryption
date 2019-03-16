@@ -32,16 +32,15 @@ def do_auth(img,uid):
 def pass_auth(uid,paswd):
 	f = open('../cloud_uploads/users.txt','r')
 	lines = f.read().split('\n')
-	print(lines)
 	users = []
 	for line in lines:
 		user = line.split(',')
 		users.append(user)
-	print(users)
 	for user in users:
 		if str(uid) == user[0]:
-			print(user[1])
 			if str(paswd) == user[1]:
+				print('[INFO] USER AUTHORIZED.')
 				return True
+	print('[INFO] UNAUTHORIZED USER.')
 	return False
 

@@ -28,7 +28,7 @@ def gen_data(uid):
 	face_recognizer = cv2.face.LBPHFaceRecognizer_create()
 	face_recognizer.train(faces, np.array(labels))
 	face_recognizer.write(str(uid)+'/recognizer.xml')
-	print('file generated')
+	print('[INFO] RECOGNIZER FILE GENERATED SUCCESSFULLY.')
 	os.chdir(path)
 
 def register_user(uid,passwd):
