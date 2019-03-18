@@ -21,15 +21,12 @@ class Decryption():
 		s = self.data
 		self.data =  s[:-ord(s[len(s)-1:])]
 
-	def decrypt_data(self,skey):
+	def decrypt_data(self,skey,op_f):
 		self.key = skey
-		print('Strating Decryption Process...')
 		self.data = base64.b64decode(self.data)
 		cip = AES.new(self.key, AES.MODE_CBC, '0'*16)
 		self.data = cip.decrypt(self.data)
 		self.unpad()
-		print('Decryption Complete.')
-		op_f = input('Output File : ')
 		f = open(op_f,'w')
 		data = []
 		for b in self.data:

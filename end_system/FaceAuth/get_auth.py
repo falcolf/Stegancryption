@@ -15,8 +15,8 @@ def auth(uid):
 		if ok is not None:
 			res.append(ok)
 			im+=1
-		time.sleep(3)
-		if im == 20:
+		time.sleep(0.5)
+		if im == 10:
 			break
 	cap.release()
 	ones = res.count(1)

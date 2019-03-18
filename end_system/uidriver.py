@@ -72,7 +72,7 @@ def login_user(frame,uidb,passwdb):
 			uidb.delete(0,'end')
 			passwdb.delete(0,'end')
 			but_enc = tkinter.Button(frame_steg,text = 'Encrypt',width = 20, command = lambda: showEncFrame(but_enc._nametowidget(but_enc.winfo_parent())))
-			but_dec = tkinter.Button(frame_steg,text = 'Decrypt',width = 20, command = emptyFrame)
+			but_dec = tkinter.Button(frame_steg,text = 'Decrypt',width = 20, command = lambda: showDecFrame(but_dec._nametowidget(but_dec.winfo_parent())))
 			but_logout = tkinter.Button(frame_steg,text = 'Logout',width = 20, command = lambda:showPrev(but_logout._nametowidget(but_logout.winfo_parent()),frame))
 			but_enc.grid(row = 0 , sticky = 'nesw')
 			but_dec.grid(row = 1, sticky = 'nesw')
@@ -121,8 +121,8 @@ def showEncFrame(frame):
 	box_emkey.grid(row = 4, column = 1)
 	lab_outfile.grid(row = 5, column = 0)
 	box_outfile.grid(row = 5, column = 1)
-	but_encrypt.grid(row = 6, column = 1)
-	but_menu.grid(row = 6,column = 0)
+	but_encrypt.grid(row = 6, column = 1,sticky='nesw')
+	but_menu.grid(row = 6,column = 0,sticky='nesw')
 	frame_enc.grid()
 	
 def encProcess(ruid,encfile,enc_opf,img,emkey,out_f,cframe,nframe):
@@ -141,7 +141,65 @@ def encProcess(ruid,encfile,enc_opf,img,emkey,out_f,cframe,nframe):
 	tkinter.messagebox.showinfo("Success", "Encrypted File and Steganographied Image Saved.")
 	showPrev(cframe,nframe)
 
+def showDecFrame(frame):
+	frame.grid_forget()
+	frame_dec = tkinter.Frame(root)
 
+	lab_decfile = tkinter.Label(frame_dec, text = 'File For Decryption')
+	box_decfile = tkinter.Entry(frame_dec)
+	lab_img = tkinter.Label(frame_dec, text = 'Image With Key')
+	box_img = tkinter.Entry(frame_dec)
+	lab_emkey = tkinter.Label(frame_dec, text = 'Embedding Key')
+	box_emkey = tkinter.Entry(frame_dec,show = '*')
+	lab_outfile = tkinter.Label(frame_dec, text = 'Decoded Output File Name')
+	box_outfile = tkinter.Entry(frame_dec)
+	but_decrypt = tkinter.Button(frame_dec, text = 'Decrypt', command = lambda: decProcess(box_decfile.get(),box_img.get(),box_emkey.get(),box_outfile.get(),but_decrypt._nametowidget(but_decrypt.winfo_parent()),frame))
+	but_menu = tkinter.Button(frame_dec, text = 'Menu', command = lambda: showPrev(but_menu._nametowidget(but_menu.winfo_parent()),frame))
+	
+	lab_decfile.grid(row = 0, column = 0)
+	box_decfile.grid(row = 0, column = 1)
+	lab_img.grid(row = 1, column = 0)
+	box_img.grid(row = 1, column = 1)
+	lab_emkey.grid(row = 2, column = 0)
+	box_emkey.grid(row = 2, column = 1)
+	lab_outfile.grid(row = 3, column = 0)
+	box_outfile.grid(row = 3, column = 1)
+	but_decrypt.grid(row = 4, column = 1,sticky='nesw')
+	but_menu.grid(row = 4,column = 0,sticky='nesw')
+	frame_dec.grid()
+					
+					
+
+
+def decProcess(decfile,img,emkey,out_f,cframe,nframe):
+	print('[INFO] LOADING MAGE')
+	in_im = cv2.imread(img)
+	print('[INFO] IMAGE LOADED SUCCESSFULLY.')
+	stegano = Steganography(in_im,emkey)
+	print('[INFO] GETTING RECIEVER\'S UID.')
+	ruid = stegano.extract_receiver()
+	print('[INFO] RECIEVER\'S UID : {}.'.format(ruid))
+	print('[INFO] INITIATING FACICAL RECOGNITION PROCESS.')
+	if(auth(ruid)):
+		print('[INFO] RECIEVER AUTHORIZED.')
+		print('[INFO] EXTRACTING KEY FROM IMAGE.')
+		byte_lst = stegano.decode_data()
+		key = bytes(byte_lst)
+		print('[INFO] KEY EXTRACTED SUCCESSFULLY.')
+		print('[INFO] INITIATING DECRYPTION PROCESS.')
+		dec = Decryption(decfile)
+		dec.decrypt_data(key,out_f)
+		print('[INFO] DECRYPTION COMPLETED SUCCESSFULLY.')
+		tkinter.messagebox.showinfo("Success", "DECRYPTED FILE SAVED.")
+		
+
+	else:
+		print('[INFO] IDENTITY OF RECIEVER NOT VERIFIED.')
+		tkinter.messagebox.showinfo("ERROR", "RECIEVER NOT AUTHORIZED.")
+		
+	showPrev(cframe,nframe)
+
+		
 
 def showLoginFrame(frame):
 	frame.grid_forget()
