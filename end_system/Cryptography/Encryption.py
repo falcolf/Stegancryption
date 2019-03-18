@@ -22,20 +22,15 @@ class Encryption():
 		s = self.data
 		self.data = s+(self.block_size-len(s)%self.block_size) * chr(self.block_size-len(s)%self.block_size)
 
-	def encrypt_data(self):
-		print('Starting Encryption Process...')
+	def encrypt_data(self,op_f):
 		self.gen_key()				# generate random key
 		self.pad()					# padding to fill in data with
 		cip = AES.new(self.key, AES.MODE_CBC, '0'*16)
 		self.data = cip.encrypt(self.data)
 		enc = base64.b64encode(self.data) #base64 encoding
-		print('Encryption complete.')
-		op_f = input('Encrypted Data File : ')
 		f = open(op_f,'wb')	
 		f.write(enc)
 		f.close()
-		print('Encrypted File Writen...')
-		ip = input('Press any key to continue...')
 		return self.key
 
 

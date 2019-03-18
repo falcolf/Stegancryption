@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 import os
+import sys
+import cv2
 from Cryptography.Encryption import Encryption
 from Cryptography.Decryption import Decryption
-from Steganography.Steganography_driver import *
+from Steganography.Steganography import *
 from FaceAuth.save_data import save_data
-import sys
+from FaceAuth.get_auth import * #for auth()
 sys.path.insert(0, '../cloud_uploads')
 from gen_data import *  #register user and gen_data
 from authorize import pass_auth
@@ -69,7 +71,7 @@ def login_user(frame,uidb,passwdb):
 		if pass_auth(uid,passwd):
 			uidb.delete(0,'end')
 			passwdb.delete(0,'end')
-			but_enc = tkinter.Button(frame_steg,text = 'Encrypt',width = 20, command = emptyFrame)
+			but_enc = tkinter.Button(frame_steg,text = 'Encrypt',width = 20, command = lambda: showEncFrame(but_enc._nametowidget(but_enc.winfo_parent())))
 			but_dec = tkinter.Button(frame_steg,text = 'Decrypt',width = 20, command = emptyFrame)
 			but_logout = tkinter.Button(frame_steg,text = 'Logout',width = 20, command = lambda:showPrev(but_logout._nametowidget(but_logout.winfo_parent()),frame))
 			but_enc.grid(row = 0 , sticky = 'nesw')
@@ -89,6 +91,58 @@ def login_user(frame,uidb,passwdb):
 		
 	frame_steg.grid()
 
+def showEncFrame(frame):
+	frame.grid_forget()
+	frame_enc = tkinter.Frame(root)
+	lab_ruid = tkinter.Label(frame_enc, text = 'Reciever\'s UID')
+	box_ruid = tkinter.Entry(frame_enc)
+	lab_encfile = tkinter.Label(frame_enc, text = 'File For Encryption')
+	box_encfile = tkinter.Entry(frame_enc)
+	lab_encop = tkinter.Label(frame_enc, text = 'Encrypted File Name')
+	box_encop = tkinter.Entry(frame_enc)
+	lab_img = tkinter.Label(frame_enc, text = 'Image For Steganography')
+	box_img = tkinter.Entry(frame_enc)
+	lab_emkey = tkinter.Label(frame_enc, text = 'Embedding Key')
+	box_emkey = tkinter.Entry(frame_enc,show = '*')
+	lab_outfile = tkinter.Label(frame_enc, text = 'Steganographied Output Image')
+	box_outfile = tkinter.Entry(frame_enc)
+	but_encrypt = tkinter.Button(frame_enc, text = 'Encrypt', command = lambda: encProcess(box_ruid.get(),box_encfile.get(),box_encop.get(),box_img.get(),box_emkey.get(),box_outfile.get(),but_encrypt._nametowidget(but_encrypt.winfo_parent()),frame))
+	but_menu = tkinter.Button(frame_enc, text = 'Menu', command = lambda: showPrev(but_menu._nametowidget(but_menu.winfo_parent()),frame))
+	
+	lab_ruid.grid(row = 0, column = 0)
+	box_ruid.grid(row = 0, column = 1)
+	lab_encfile.grid(row = 1, column = 0)
+	box_encfile.grid(row = 1, column = 1)
+	lab_encop.grid(row = 2, column = 0)
+	box_encop.grid(row = 2, column = 1)
+	lab_img.grid(row = 3, column = 0)
+	box_img.grid(row = 3, column = 1)
+	lab_emkey.grid(row = 4, column = 0)
+	box_emkey.grid(row = 4, column = 1)
+	lab_outfile.grid(row = 5, column = 0)
+	box_outfile.grid(row = 5, column = 1)
+	but_encrypt.grid(row = 6, column = 1)
+	but_menu.grid(row = 6,column = 0)
+	frame_enc.grid()
+	
+def encProcess(ruid,encfile,enc_opf,img,emkey,out_f,cframe,nframe):
+	print('[INFO] STARTING ENCRYPTION PROCESS.')
+	encrytor = Encryption(encfile)
+	enc_key = encrytor.encrypt_data(enc_opf)
+	print('[INFO] ENCRYPTION COMPLETED SUCCESSFULLY.')
+	print('[INFO] LOADING SOURCE IMAGE')
+	in_im = cv2.imread(img)
+	print('[INFO] SOURCE IMAGE LOADED SUCCESSFULLY.')
+	print('[INFO] STARTING STEGANOGRAPHY PROCESS.')
+	stegano = Steganography(in_im,emkey)
+	res_img = stegano.encode_data(enc_key,ruid)
+	cv2.imwrite(out_f,res_img)
+	print('[INFO] STEGANOGRAPHY PROCESS COMPLETED SUCCESSFULLY.')
+	tkinter.messagebox.showinfo("Success", "Encrypted File and Steganographied Image Saved.")
+	showPrev(cframe,nframe)
+
+
+
 def showLoginFrame(frame):
 	frame.grid_forget()
 	frame_login = tkinter.Frame(root)
@@ -106,6 +160,8 @@ def showLoginFrame(frame):
 	but_login.grid(row = 2, column = 1,sticky='nesw')
 	frame_login.grid()
 
+os.system('clear')
+print('[INFO] INITIATING STEGANCRYPTION MODULE.')
 root = tkinter.Tk()
 windowWidth = root.winfo_reqwidth()
 windowHeight = root.winfo_reqheight() 
