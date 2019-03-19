@@ -29,20 +29,18 @@ def registerUser(uid,passwd,sframe,rframe):
 	tkinter.messagebox.showinfo("Success", "Registered")
 	showPrev(rframe,sframe)
 
-
 def showRegFrame(frame):
 	frame.grid_forget()
 	frame_reg = tkinter.Frame(root)
 	lab_uid = tkinter.Label(frame_reg, text='UID')
 	lab_passwd = tkinter.Label(frame_reg, text = 'Password')
 	box_uid = tkinter.Entry(frame_reg)
-
+	
 	if(os.stat('../cloud_uploads/users.txt').st_size == 0):
 		iuid = '1'
 	else:
 		iuid = len(open('../cloud_uploads/users.txt','r').read().split('\n'))
-
-
+	
 	box_uid.insert(0,str(iuid))
 	box_uid.config(state = 'disabled')
 	box_pass = tkinter.Entry(frame_reg,show = '*')
@@ -80,6 +78,7 @@ def login_user(frame,uidb,passwdb):
 			but_login_again = tkinter.Button(frame_steg,text = 'Try Again', command = lambda:showPrev(but_login_again._nametowidget(but_login_again.winfo_parent()),frame)) 
 			lab_error.grid(row = 0)
 			but_login_again.grid(row = 1)
+	
 	else:
 		lab_error = tkinter.Label(frame_steg, text = 'Error', fg = 'red',width = 20)
 		but_login_again = tkinter.Button(frame_steg,text = 'Try Again', command = lambda:showPrev(but_login_again._nametowidget(but_login_again.winfo_parent()),frame)) 
@@ -89,10 +88,12 @@ def login_user(frame,uidb,passwdb):
 	frame_steg.grid()
 
 def getFile(fbox,but,num):
+	
 	if num == 1:
 		filename = fd.askopenfilename()
 	else:
 		filename = fd.askdirectory()
+	
 	fbox.delete(0,'end')
 	fbox.insert(0,filename)
 	filename = filename.split('/')[-1]
@@ -155,7 +156,6 @@ def encProcess(ruid,encfile,enc_opf,img,emkey,out_f,cframe,nframe):
 def showDecFrame(frame):
 	frame.grid_forget()
 	frame_dec = tkinter.Frame(root)
-
 	lab_decfile = tkinter.Label(frame_dec, text = 'Encrypted File')
 	box_decfile = tkinter.Entry(frame_dec)
 	but_decfile = tkinter.Button(frame_dec, text = 'Choose File', command = lambda: getFile(box_decfile,but_decfile,1))
@@ -182,9 +182,6 @@ def showDecFrame(frame):
 	but_menu.grid(row = 4,column = 0,sticky='nesw')
 	frame_dec.grid()
 					
-					
-
-
 def decProcess(decfile,img,emkey,out_f,cframe,nframe):
 	print('[INFO] LOADING MAGE')
 	in_im = cv2.imread(img)
@@ -194,6 +191,7 @@ def decProcess(decfile,img,emkey,out_f,cframe,nframe):
 	ruid = stegano.extract_receiver()
 	print('[INFO] RECIEVER\'S UID : {}.'.format(ruid))
 	print('[INFO] INITIATING FACICAL RECOGNITION PROCESS.')
+	
 	if(auth(ruid)):
 		print('[INFO] RECIEVER AUTHORIZED.')
 		print('[INFO] EXTRACTING KEY FROM IMAGE.')
@@ -206,14 +204,11 @@ def decProcess(decfile,img,emkey,out_f,cframe,nframe):
 		print('[INFO] DECRYPTION COMPLETED SUCCESSFULLY.')
 		tkinter.messagebox.showinfo("Success", "DECRYPTED FILE SAVED.")
 		
-
 	else:
 		print('[INFO] IDENTITY OF RECIEVER NOT VERIFIED.')
 		tkinter.messagebox.showinfo("ERROR", "RECIEVER NOT AUTHORIZED.")
 		
 	showPrev(cframe,nframe)
-
-		
 
 def showLoginFrame(frame):
 	frame.grid_forget()
