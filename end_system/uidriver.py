@@ -12,10 +12,7 @@ from gen_data import *  #register user and gen_data
 from authorize import pass_auth
 import tkinter
 from tkinter import messagebox
-
-def emptyFrame():
-	print('empty')
-	pass
+from tkinter import filedialog as fd
 
 def showPrev(rframe , frame):
 	rframe.grid_forget()
@@ -91,36 +88,50 @@ def login_user(frame,uidb,passwdb):
 		
 	frame_steg.grid()
 
+def getFile(fbox,but,num):
+	if num == 1:
+		filename = fd.askopenfilename()
+	else:
+		filename = fd.askdirectory()
+	fbox.delete(0,'end')
+	fbox.insert(0,filename)
+	filename = filename.split('/')[-1]
+	but.config(text = filename)
+
 def showEncFrame(frame):
 	frame.grid_forget()
 	frame_enc = tkinter.Frame(root)
 	lab_ruid = tkinter.Label(frame_enc, text = 'Reciever\'s UID')
 	box_ruid = tkinter.Entry(frame_enc)
-	lab_encfile = tkinter.Label(frame_enc, text = 'File For Encryption')
+	lab_encfile = tkinter.Label(frame_enc, text = 'File for Encryption')
 	box_encfile = tkinter.Entry(frame_enc)
-	lab_encop = tkinter.Label(frame_enc, text = 'Encrypted File Name')
+	but_encfile = tkinter.Button(frame_enc, text = 'Choose File', command = lambda: getFile(box_encfile,but_encfile,1))
+	lab_encop = tkinter.Label(frame_enc, text = 'Encrypted File Directory')
 	box_encop = tkinter.Entry(frame_enc)
-	lab_img = tkinter.Label(frame_enc, text = 'Image For Steganography')
+	but_encop = tkinter.Button(frame_enc, text = 'Choose Directory', command = lambda: getFile(box_encop,but_encop,0))
+	lab_img = tkinter.Label(frame_enc, text = 'Image')
 	box_img = tkinter.Entry(frame_enc)
+	but_img = tkinter.Button(frame_enc, text = 'Choose File', command = lambda: getFile(box_img,but_img,1))
+	lab_outfile = tkinter.Label(frame_enc, text = 'Stegano Image Directory')
+	box_outfile = tkinter.Entry(frame_enc)
+	but_outfile = tkinter.Button(frame_enc, text = 'Choose Directory', command = lambda: getFile(box_outfile,but_outfile,0))
 	lab_emkey = tkinter.Label(frame_enc, text = 'Embedding Key')
 	box_emkey = tkinter.Entry(frame_enc,show = '*')
-	lab_outfile = tkinter.Label(frame_enc, text = 'Steganographied Output Image')
-	box_outfile = tkinter.Entry(frame_enc)
-	but_encrypt = tkinter.Button(frame_enc, text = 'Encrypt', command = lambda: encProcess(box_ruid.get(),box_encfile.get(),box_encop.get(),box_img.get(),box_emkey.get(),box_outfile.get(),but_encrypt._nametowidget(but_encrypt.winfo_parent()),frame))
+	but_encrypt = tkinter.Button(frame_enc, text = 'Encrypt', command = lambda: encProcess(box_ruid.get(),box_encfile.get(),box_encop.get()+'/encrypted_'+box_encfile.get().split('/')[-1],box_img.get(),box_emkey.get(),box_outfile.get()+'/stegano_'+box_img.get().split('/')[-1],but_encrypt._nametowidget(but_encrypt.winfo_parent()),frame))
 	but_menu = tkinter.Button(frame_enc, text = 'Menu', command = lambda: showPrev(but_menu._nametowidget(but_menu.winfo_parent()),frame))
-	
+
 	lab_ruid.grid(row = 0, column = 0)
 	box_ruid.grid(row = 0, column = 1)
 	lab_encfile.grid(row = 1, column = 0)
-	box_encfile.grid(row = 1, column = 1)
+	but_encfile.grid(row = 1, column = 1,sticky='nesw')
 	lab_encop.grid(row = 2, column = 0)
-	box_encop.grid(row = 2, column = 1)
+	but_encop.grid(row = 2, column = 1,sticky='nesw')
 	lab_img.grid(row = 3, column = 0)
-	box_img.grid(row = 3, column = 1)
-	lab_emkey.grid(row = 4, column = 0)
-	box_emkey.grid(row = 4, column = 1)
-	lab_outfile.grid(row = 5, column = 0)
-	box_outfile.grid(row = 5, column = 1)
+	but_img.grid(row = 3, column = 1,sticky='nesw')
+	lab_outfile.grid(row = 4, column = 0)
+	but_outfile.grid(row = 4, column = 1,sticky='nesw')
+	lab_emkey.grid(row = 5, column = 0)
+	box_emkey.grid(row = 5, column = 1)
 	but_encrypt.grid(row = 6, column = 1,sticky='nesw')
 	but_menu.grid(row = 6,column = 0,sticky='nesw')
 	frame_enc.grid()
@@ -145,25 +156,28 @@ def showDecFrame(frame):
 	frame.grid_forget()
 	frame_dec = tkinter.Frame(root)
 
-	lab_decfile = tkinter.Label(frame_dec, text = 'File For Decryption')
+	lab_decfile = tkinter.Label(frame_dec, text = 'Encrypted File')
 	box_decfile = tkinter.Entry(frame_dec)
-	lab_img = tkinter.Label(frame_dec, text = 'Image With Key')
+	but_decfile = tkinter.Button(frame_dec, text = 'Choose File', command = lambda: getFile(box_decfile,but_decfile,1))
+	lab_img = tkinter.Label(frame_dec, text = 'Image')
 	box_img = tkinter.Entry(frame_dec)
+	but_img = tkinter.Button(frame_dec, text = 'Choose File', command = lambda: getFile(box_img,but_img,1))
+	lab_outfile = tkinter.Label(frame_dec, text = 'Decrypted File Directory')
+	box_outfile = tkinter.Entry(frame_dec)
+	but_outfile = tkinter.Button(frame_dec, text = 'Choose Directory', command = lambda: getFile(box_outfile,but_outfile,0))
 	lab_emkey = tkinter.Label(frame_dec, text = 'Embedding Key')
 	box_emkey = tkinter.Entry(frame_dec,show = '*')
-	lab_outfile = tkinter.Label(frame_dec, text = 'Decoded Output File Name')
-	box_outfile = tkinter.Entry(frame_dec)
-	but_decrypt = tkinter.Button(frame_dec, text = 'Decrypt', command = lambda: decProcess(box_decfile.get(),box_img.get(),box_emkey.get(),box_outfile.get(),but_decrypt._nametowidget(but_decrypt.winfo_parent()),frame))
+	but_decrypt = tkinter.Button(frame_dec, text = 'Decrypt', command = lambda: decProcess(box_decfile.get(),box_img.get(),box_emkey.get(),box_outfile.get()+'/decrypted_'+box_decfile.get().split('/')[-1],but_decrypt._nametowidget(but_decrypt.winfo_parent()),frame))
 	but_menu = tkinter.Button(frame_dec, text = 'Menu', command = lambda: showPrev(but_menu._nametowidget(but_menu.winfo_parent()),frame))
 	
 	lab_decfile.grid(row = 0, column = 0)
-	box_decfile.grid(row = 0, column = 1)
+	but_decfile.grid(row = 0, column = 1,sticky='nesw')
 	lab_img.grid(row = 1, column = 0)
-	box_img.grid(row = 1, column = 1)
-	lab_emkey.grid(row = 2, column = 0)
-	box_emkey.grid(row = 2, column = 1)
-	lab_outfile.grid(row = 3, column = 0)
-	box_outfile.grid(row = 3, column = 1)
+	but_img.grid(row = 1, column = 1,sticky='nesw')
+	lab_outfile.grid(row = 2, column = 0)
+	but_outfile.grid(row = 2, column = 1,sticky='nesw')
+	lab_emkey.grid(row = 3, column = 0)
+	box_emkey.grid(row = 3, column = 1)
 	but_decrypt.grid(row = 4, column = 1,sticky='nesw')
 	but_menu.grid(row = 4,column = 0,sticky='nesw')
 	frame_dec.grid()
