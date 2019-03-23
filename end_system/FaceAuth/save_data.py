@@ -12,7 +12,7 @@ def save_data(uid):
 		cv2.imwrite('uploads/'+str(images)+'.jpg',frame)
 		images+=1
 	cap.release()
-	print('[INFO] IMAGES CAPTURED AND TRANFERRED SUCCESSFULLY. ')
+	print('[INFO] IMAGES CAPTURED AND TRANSFERRED SUCCESSFULLY. ')
 
 	#temporary cloud transfer
 	os.system('mkdir ../cloud_uploads/'+str(uid))
