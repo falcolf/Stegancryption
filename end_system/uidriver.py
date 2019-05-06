@@ -200,9 +200,14 @@ def decProcess(decfile,img,emkey,out_f,cframe,nframe):
 		print('[INFO] KEY EXTRACTED SUCCESSFULLY.')
 		print('[INFO] INITIATING DECRYPTION PROCESS.')
 		dec = Decryption(decfile)
-		dec.decrypt_data(key,out_f)
-		print('[INFO] DECRYPTION COMPLETED SUCCESSFULLY.')
-		tkinter.messagebox.showinfo("Success", "DECRYPTED FILE SAVED.")
+		try:
+			dec.decrypt_data(key,out_f)
+		except:
+			print('[INFO] USER NOT AUTHORIZED. CHECK KEY.')
+			tkinter.messagebox.showinfo("ERROR", "KEY ERROR. PLEASE CHECK IMAGE OR EMBEDDING KEY.")
+		else:
+			print('[INFO] DECRYPTION COMPLETED SUCCESSFULLY.')
+			tkinter.messagebox.showinfo("Success", "DECRYPTED FILE SAVED.")
 		
 	else:
 		print('[INFO] IDENTITY OF RECIEVER NOT VERIFIED.')

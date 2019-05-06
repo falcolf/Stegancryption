@@ -16,12 +16,12 @@ def auth(uid):
 			res.append(ok)
 			im+=1
 		time.sleep(0.5)
-		if im == 10:
+		if im == 20:
 			break
 	cap.release()
 	ones = res.count(1)
 	probab = ones/len(res)
-	if probab > 0.8:
+	if probab > 0.75:
 		return True
 	else:
 		return False
